@@ -1,0 +1,23 @@
+{
+  "name": "GithubSorter",
+  "description": "GithubSorter",
+  "version": "0.1.0",
+  "manifest_version": 2,
+  "permissions": [
+    "https://github.com/",
+    "debugger",
+    "storage",
+    "activeTab"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://*.github.com/*"],
+      "js": [
+        "jquery-3.3.1.min.js",
+        "regex-sort.js",
+        "contentScript.js"
+      ]
+    }
+  ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval' 'self' unsafe-inline"
+}

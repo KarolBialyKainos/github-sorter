@@ -1,0 +1,20 @@
+.js-diff-progressive-container {
+    margin: 25px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.file {
+    border: 1px solid lightgrey;
+    margin-bottom: 15px;
+}
+
+.file-header {
+    padding: 3px;
+    font-weight: bold;
+    background: #d8d6d6;
+}
+
+.js-file-content {
+    padding: 20px;
+    text-align: center;
+}
