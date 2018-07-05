@@ -1,6 +1,8 @@
 const diffContainerSelector = '.js-diff-progressive-container';
 const dict = {};
 const files = [];
+let initialNumberOfFiles;
+let inProgress = false;
 
 const testPatterns = [
     /test\/java/,
@@ -31,14 +33,25 @@ function decorateFile(filename) {
 }
 
 function hideFileContent(filename) {
-    $(dict[filename]).find('button.js-details-target').click();
+    $(dict[filename]).find('button.js-details-target[aria-expanded="true"]').click();
 }
 
 function markTestOnList(filename) {
-    $(dict[filename]).css('border-top', '3px solid blue');
+    $(dict[filename]).css('border-top', '3px solid #3f51b5');
+}
+
+
+function reorderElements() {
+    const diffContainer = $(diffContainerSelector);
+    
+    regexSort(files, testPatterns).forEach(filename => {
+        diffContainer.append($(dict[filename]));
+    });
 }
 
 function startSorter() {
+    inProgress = true;
+    console.log('startSorter, files ' + getAllFiles().length);
     getAllFiles().each((number, file) => {
         const filename = getFilename(file);
         files.push(filename);
@@ -47,22 +60,45 @@ function startSorter() {
         decorateFile(filename);
     });
     
-    const diffContainer = $(diffContainerSelector);
-    
-    regexSort(files, testPatterns).forEach(filename => {
-        diffContainer.append($(dict[filename]));
-    });
+    // reorderElements();
+
+    inProgress = false;
 }
+
+function performCheckForNewFiles() {
+    let numberOfTries = 0;
+    const newFilesCheck = setInterval(() => {
+        if (inProgress) {
+            return;
+        }
+        numberOfTries++;
+        if (newFilesCheck > 5) {
+            clearInterval(newFilesCheck);
+        }
+
+        if (getAllFiles().length > initialNumberOfFiles) {
+            console.log('Found more files!');
+            startSorter();
+        }
+    }, 1000);
+}
+
 
 const checkVar = setInterval(() => {
     if (!window.location.pathname.indexOf('files')) {
         return;
     }
 
-    if (getAllFiles().length === 0) {
+    const numberOfFiles = getAllFiles().length;
+    if (numberOfFiles === 0) {
         return;
     }
 
+    initialNumberOfFiles = numberOfFiles;
+
     clearInterval(checkVar);
     startSorter();
+
+    performCheckForNewFiles();
 }, 100);
+
