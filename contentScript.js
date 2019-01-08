@@ -2,7 +2,6 @@ const diffContainerSelector = '.js-diff-progressive-container';
 const dict = {};
 const files = [];
 let initialNumberOfFiles;
-let inProgress = false;
 
 const testPatterns = [
     /test\/java/,
@@ -50,7 +49,6 @@ function reorderElements() {
 }
 
 function startSorter() {
-    inProgress = true;
     console.log('startSorter, files ' + getAllFiles().length);
     getAllFiles().each((number, file) => {
         const filename = getFilename(file);
@@ -61,16 +59,11 @@ function startSorter() {
     });
     
     // reorderElements();
-
-    inProgress = false;
 }
 
 function performCheckForNewFiles() {
     let numberOfTries = 0;
     const newFilesCheck = setInterval(() => {
-        if (inProgress) {
-            return;
-        }
         numberOfTries++;
         if (newFilesCheck > 5) {
             clearInterval(newFilesCheck);
